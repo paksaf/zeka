@@ -1,0 +1,84 @@
+name: zeka
+description: "Zeka — Smart AI Toolkit. Calculator, unit converter, voice, camera, bilingual (EN/UR). Works offline and online."
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.5.0
+  flutter: ">=3.22.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # ── Core ──────────────────────────────────────────────
+  cupertino_icons: ^1.0.8
+  http: ^1.2.2                # DeepSeek + OpenAI calls
+  shared_preferences: ^2.3.0  # persist language + last-used unit prefs
+  flutter_secure_storage: ^9.2.2  # JWT in Keystore/Keychain (2026-06-10; was SharedPreferences)
+  sqflite: ^2.4.0             # offline conversion DB
+  path_provider: ^2.1.4
+  path: ^1.9.0
+  flutter_dotenv: ^5.2.1      # read API keys from .env in debug builds
+  flutter_svg: ^2.0.10        # render Zeka SVG icons + logo
+
+  # ── Voice ─────────────────────────────────────────────
+  speech_to_text: ^7.0.0      # browser-equivalent press-to-speak; multi-lang
+  flutter_tts: ^4.2.0         # speak the answer back ("the answer is 200")
+
+  # ── Camera / image / AR ───────────────────────────────
+  image_picker: ^1.1.2        # camera capture + gallery attach
+  permission_handler: ^11.3.1 # camera + mic permission flow
+
+  # ── State ─────────────────────────────────────────────
+  flutter_riverpod: ^2.5.1    # reactive state for AI / language
+
+  # ── Misc ──────────────────────────────────────────────
+  intl: ^0.20.2
+  url_launcher: ^6.3.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  build_runner: ^2.4.13
+  flutter_launcher_icons: ^0.14.1
+
+flutter:
+  uses-material-design: true
+  # Note: generate: true (AppLocalizations from ARB files) is intentionally
+  # off — Zeka uses an in-code dictionary in services/language_service.dart
+  # so we don't have to ship the codegen pipeline. Add ARB later if the
+  # string count grows past ~50 entries.
+
+  assets:
+    - assets/icons/
+    - .env
+
+  # Custom fonts are commented out until the .ttf files are committed to
+  # assets/fonts/. Material defaults render fine without them. Uncomment
+  # this block once NotoSans-Regular.ttf and NotoSans-Bold.ttf are added.
+  # fonts:
+  #   - family: NotoSans
+  #     fonts:
+  #       - asset: assets/fonts/NotoSans-Regular.ttf
+  #       - asset: assets/fonts/NotoSans-Bold.ttf
+  #         weight: 700
+
+# flutter_launcher_icons is opt-in — once you drop zeka_icon.png (1024×1024)
+# into assets/icons/ run `flutter pub run flutter_launcher_icons` to
+# materialise the platform-specific icon files. The config is here ready.
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/zeka_icon.png"
+  adaptive_icon_background: "#0B0B1A"
+  adaptive_icon_foreground: "assets/icons/zeka_icon.png"
+  windows:
+    generate: true
+    image_path: "assets/icons/zeka_icon.png"
+  macos:
+    generate: true
+    image_path: "assets/icons/zeka_icon.png"
