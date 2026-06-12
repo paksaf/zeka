@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:flutter_tts/flutter_tts.dart';
 
+import '../services/conversion_intent.dart';
 import '../services/deepseek_service.dart';
 import '../services/language_service.dart';
 import '../theme.dart';
@@ -18,6 +19,7 @@ class AIScreen extends ConsumerStatefulWidget {
 
 class _AIScreenState extends ConsumerState<AIScreen> {
   final _service = DeepSeekService();
+  final _conv = ConversionIntentParser();
   final _controller = TextEditingController();
   final _stt = stt.SpeechToText();
   final _tts = FlutterTts();
@@ -68,6 +70,19 @@ class _AIScreenState extends ConsumerState<AIScreen> {
       _result = null;
     });
     try {
+      // Gate B: answer unit conversions EXACTLY from the local catalogue
+      // (offline, instant, correct PK units) before spending an AI call.
+      if (_image == null) {
+        final local = _conv.tryParse(q);
+        if (local != null) {
+          setState(() {
+            _result = local;
+            _loading = false;
+          });
+          _speak(local.answer);
+          return;
+        }
+      }
       List<int>? bytes;
       if (_image != null) bytes = await File(_image!.path).readAsBytes();
       final res = await _service.ask(
